@@ -1,0 +1,8 @@
+*.o
+gmst
+plot
+.cproject
+.project
+makefile.*
+*.txt
+*.dat
