@@ -1,4 +1,4 @@
-function writeCLU_COO_File(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit)
+function writeCLU_COO_File(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, taskName)
 
 % load C.mat;
 % numOfCams = 58;
@@ -56,7 +56,7 @@ fclose(fid);
 % --------------------------------------
 fid = fopen(fullfile(outputPath, [num2str(numOfCams), 'all', num2str(numOfCams * discretizedLevel), '.dat']), 'w');
 cluFileName = [num2str(numOfCams),'inst', num2str(numOfCams * discretizedLevel) , '.clu'];
-fprintf(fid, '%s 1 %d', cluFileName, timeLimit);
+fprintf(fid, '%s 1 %d ../%s', cluFileName, timeLimit,taskName);
 fclose(fid);
 
 

@@ -7,6 +7,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "grasp.h"
+extern std::string INSTANCES_DIR;
 
 GRASP::GRASP(){
 	

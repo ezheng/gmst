@@ -1,18 +1,19 @@
 %  prepare the camera parameters
 % 
-function mainKillDevil_realData( timeLimit, workingPathHead, isDraw)
+function mainKillDevil_realData( timeLimit, workingPathHead, isDraw, taskName, discretizedLevel, near, far)
 
 %numOfCameras = 100;
 % close all;
-workingPathHead = '/home/ezheng/Enliang/matlab/gmst/';
-taskName = 'brook3';
-timeLimit = 500;
+if(nargin == 0)
+    workingPathHead = '/home/ezheng/Enliang/matlab/gmst/';
+    taskName = 'brook3';
+    timeLimit = 30;
+    isDraw = true;
+    discretizedLevel = 5;
+    near = 5; far = 12;
+end
 
-knownOrder = true;
-
-discretizedLevel = 30;
-near = 5; far = 12;
-isDraw = true;   
+knownOrder = true;  
 rng default;
 originalDir = fullfile(workingPathHead, 'realData', taskName);
 % ============================================================
@@ -23,7 +24,7 @@ if(~exist( matFileFull, 'file'))
     load(measurement2DFileName);
     [camera, points3D] = extractNVMData(nvmFileName);
     save(matFileFull);
-    elsel
+else
     load(matFileFull, 'pointsPos', 'camera', 'points3D');
 end
 
@@ -84,7 +85,11 @@ C = C(ind);
 save(fullfile(workingDir, 'C.mat'), 'C');
 
 if(knownOrder)
-    
+    if(knownOrder)
+        cd ../cvx;
+        cvx_setup;
+        cd ../batchProcess;
+    end
     [Traj, Traj2] = TrajectoryReconstruction(C); % Reconstruction w/o predefined number of basis    
     Pts3d = Traj{1};
     range = 1:size(Pts3d,1);
@@ -108,15 +113,17 @@ for i = 1:numel(C)
 end
 
 addpath('generateGMSTData');
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel);
+generateGMSTData(taskName, workingDir, timeLimit, near, far, discretizedLevel);
 rmpath('generateGMSTData');
 
 % run gmst
 % addpath( '../codigo_gmst/');
-
 % gmstFilePath = 
+
 dataFile = fullfile( fullfile( workingPathHead, [taskName, '_time',num2str(timeLimit)])  , [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+tic
 system(['../codigo_gmst/gmst -all ', dataFile]);
+fprintf(1,'it takes %f second\n', toc);
 % rmpath( '../codigo_gmst/');
 
 

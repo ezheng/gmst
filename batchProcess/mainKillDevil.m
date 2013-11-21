@@ -5,7 +5,7 @@ function mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHea
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
 
 
-workingDir = fullfile(workingPathHead, ['data','_time',num2str(timeLimit)]...
+workingDir = fullfile(workingPathHead, ['task','_time',num2str(timeLimit)]...
     , ['task_', num2str(numOfCameras)] );
 taskName = ['task', num2str(numOfCameras)];
 knownOrder = true;
@@ -109,16 +109,16 @@ for i = 1:numel(C)
 end
 
 addpath('generateGMSTData');
-verticeFilePath = ['../data_time', num2str(timeLimit)];
+verticeFilePath = ['../','task','_time', num2str(timeLimit)];
 verticesFileName = fullfile(verticeFilePath, [num2str(numel(C)), 'inst',...
     num2str(numel(C) * discretizedLevel), '.clu.vertices']);
 
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel);
+generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task');
 rmpath('generateGMSTData');
 
 % run gmst
 % addpath( '../codigo_gmst/');
-dataFile = fullfile(['../data_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
 system(['../codigo_gmst/gmst -all ', dataFile]);
 % rmpath( '../codigo_gmst/');
 

@@ -9,6 +9,8 @@
 #include "instance.h"
 #include <sstream>
 
+extern std::string INSTANCES_DIR;
+
 Instance::Instance(string fileName){
 
 	name = fileName;

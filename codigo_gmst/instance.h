@@ -21,7 +21,8 @@
 #define COST  2
 
 //#define INSTANCES_DIR "/home/posgrad/cferreira/gmstInstances/"
-#define INSTANCES_DIR "../brook3"
+//#define INSTANCES_DIR "../brook3"
+//std::string INSTANCES_DIR "../brook3"
 using namespace std;
 
 /**

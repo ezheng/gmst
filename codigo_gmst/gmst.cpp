@@ -34,6 +34,7 @@
 
 #define INSTANCES_FILE "instances.dat"
 //#define PLOT_DIR "plot/"
+std::string INSTANCES_DIR;
 
 using namespace std;
 
@@ -125,46 +126,37 @@ void createPlotFiles(string instanceName, vector<int> solution, int timeLimit){
 		}
 		fin.close();	
 
-		// added by Enliang
-		//ostringstream oss_Enliang;
-		//oss_Enliang << PLOT_DIR << instanceName << ".vertices";
-		//ofstream fout_Enliang(oss_Enliang.str().c_str(), ios::out);
 		ofstream fout_Enliang( (oss_enliang.str() + instanceName + ".vertices").c_str(), ios::out);
 
 		//Criando o arquivo com as informações sobre as arestas = Creating the file with information about the edges
-		//ostringstream oss2;
-		//oss2 << PLOT_DIR << instanceName << ".gnudat1";
-		//ofstream fout1(oss2.str().c_str(), ios::out);
-		ofstream fout1( (oss_enliang.str() + instanceName + ".gnudat1").c_str() , ios::out);
+	//	ofstream fout1( (oss_enliang.str() + instanceName + ".gnudat1").c_str() , ios::out);
 
 		//Para cada aresta da solução, imprimindo o vertice 1
 		for(unsigned int vertex1=0; vertex1 < tree.size(); vertex1++){
 			if(tree[vertex1] != -1){
-				fout1 << posX[vertex1] << " " << posY[vertex1];
+	//			fout1 << posX[vertex1] << " " << posY[vertex1];
 				fout_Enliang << vertex1 << " ";
-				if(vertex1 < tree.size()-1)
-					fout1 << " ";
+	//			if(vertex1 < tree.size()-1)
+	//				fout1 << " ";
 			}
 		}
-		fout1 << endl;
+	//	fout1 << endl;
 		fout_Enliang << endl;
 		//Para cada aresta da solução, imprimindo o vertice 2 =For each edge of the solution, printing the vertex 2
 		for(unsigned int vertex1=0; vertex1 < tree.size(); vertex1++){
 			if(tree[vertex1] != -1){
 				int vertex2 = tree[vertex1];
-				fout1 << posX[vertex2] << " " << posY[vertex2];
+	//			fout1 << posX[vertex2] << " " << posY[vertex2];
 				fout_Enliang << vertex2 << " ";
-				if(vertex1 < tree.size()-1)
-					fout1 << " ";
+	//			if(vertex1 < tree.size()-1)
+	//				fout1 << " ";
 			}
 		}
-		fout1.close();
+	//	fout1.close();
 		fout_Enliang.close();
+
 		//Criando arquivo que conterá as posições dos vértices de cada cluster =Creating file containing the positions of the vertices of each cluster
-		//ostringstream oss3;
-		//oss3 << PLOT_DIR << instanceName << ".gnudat2";
-		//ofstream cooFile(oss3.str().c_str(), ios::out);
-		ofstream cooFile((oss_enliang.str() + instanceName + ".gnudat2").c_str(), ios::out);
+	/*	ofstream cooFile((oss_enliang.str() + instanceName + ".gnudat2").c_str(), ios::out);
 		
 		//Inserindo os dados por linha do arquivo = Entering the data file line
 		unsigned int line = 0;
@@ -182,12 +174,9 @@ void createPlotFiles(string instanceName, vector<int> solution, int timeLimit){
 			cooFile << endl;
 			line++;
 		}
-		cooFile.close();
+		cooFile.close(); */
 	
-		//Agora criando arquivo com os comandos do gnuplot
-		//ostringstream oss4;
-		//oss4 << PLOT_DIR << instanceName <<  ".gnu";
-		//ofstream gnuFile(oss4.str().c_str(), ios::out);
+	/*	//Agora criando arquivo com os comandos do gnuplot
 		ofstream gnuFile( (oss_enliang.str() + instanceName + ".gnu").c_str(), ios::out);
 		gnuFile << "set output \""<< instanceName << ".eps\"" << endl;
 		gnuFile << "set terminal postscript eps color" << endl;
@@ -201,7 +190,6 @@ void createPlotFiles(string instanceName, vector<int> solution, int timeLimit){
 				gnuFile << ",";
 			}
 		}
-	
 		//Comandos para plotar os vértices do grafo
 		gnuFile << ",";
 		for(unsigned int i=1; i <= Graph::graph.numberOfClusters; i++){
@@ -211,7 +199,7 @@ void createPlotFiles(string instanceName, vector<int> solution, int timeLimit){
 			}
 		}
 		gnuFile << endl;
-		gnuFile.close();
+		gnuFile.close(); */
 	
 		if(Parameters::getInstance().PRINT_SOLUTION){
 			cout << "Solucao:" << endl;
@@ -434,7 +422,7 @@ void extractInstancesNames(char* fileName){
 			int timeLimit;
 			int target;
 	
-			fin >> instance >> target >> timeLimit;
+			fin >> instance >> target >> timeLimit >> INSTANCES_DIR;
 			instances.push_back(instance);
 			targets.push_back(target);
 			timeLimits.push_back(timeLimit);
