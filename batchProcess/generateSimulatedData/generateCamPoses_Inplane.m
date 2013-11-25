@@ -11,8 +11,10 @@ maxRadius = max(radius);
 focalLength = 1024;
 K = [focalLength, 0 512; 0 focalLength 384; 0 0 1];
 
-cameraC = rand(3,numOfCameras);
-cameraC = cameraC - 0.5;
+cameraC = rand(3,numOfCameras) - 0.5;
+% project the 3d points onto the same plane with other 3d points.
+[u, s, ~] = svd(points3D);    
+cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);
 
 % project it on the same plane
     
@@ -22,12 +24,9 @@ cameraC = cameraC - 0.5;
 % cameraC = cameraC ./ repmat( scale, 3, 1 ); %normalize
 % cameraC = cameraC * (maxRadius * 10) + rand(size(cameraC)) * 2 *maxRadius;
 cameraC = cameraC ./ repmat(sqrt(sum(cameraC .^2 ,1)), 3,1);
-cameraC = repmat(centerOfPoints, 1, size(cameraC, 2)) + cameraC .* (maxRadius * 2 + rand(size(cameraC)) * maxRadius);
+cameraC = repmat(centerOfPoints, 1, size(cameraC, 2)) + cameraC .* (2 + rand(size(cameraC)) *3)* maxRadius ;
 
 
-% project the 3d points onto the same plane with other 3d points.
-[u, s, ~] = svd(points3D);    
-cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);
 
 imageWidth = K(1,3) * 2;
 imageHeight = K(2,3) * 2;

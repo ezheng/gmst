@@ -121,39 +121,48 @@ if( exist(groundTruthFile, 'file'))
 end
 
 table = zeros(numOfCameras, numOfCameras);
-for count = 1:200
-count
-addpath('generateGMSTData');
-verticeFilePath = ['../','task','_time', num2str(timeLimit)];
-verticesFileName = fullfile(verticeFilePath, [num2str(numel(C)), 'inst',...
-    num2str(numel(C) * discretizedLevel), '.clu.vertices']);
 
-allId = randperm(numel(C));
-subsetId = allId(1:20); subsetId = sort(subsetId);
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task', subsetId);
-rmpath('generateGMSTData');
-
-% run gmst
-% addpath( '../codigo_gmst/');
-dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
-tic;
-system(['../codigo_gmst/gmst -all ', dataFile]);
-fprintf(1,'it takes %f second\n', toc);
-% rmpath( '../codigo_gmst/');
-saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far, subsetId);
-
-computedPosFileName = fullfile(workingDir, 'computedPos.mat');
-load(computedPosFileName);
-if(isDraw)      %plot the unordered results
-    for i = 1: size(camConnect,1)
-        pts = calculatedPos(:, camConnect(i,:));
-        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
-    end       
+numOfCamPerSubset = 20;
+for imageId = 1: numel(C)
+    allsubsetId = getSubsetId(numOfCameras, numOfCamPerSubset);
+    for count = 1:numel(allsubsetId)
+%         subsetId = [allId( (count - 1)*20+1: count * 20), 1]; subsetId = unique(subsetId);
+        fprintf(1, 'count: %d, imageId:%d\n', count, imageId);
+        subsetId = [allsubsetId{count}, imageId]; subsetId = unique(subsetId);
+        
+        addpath('generateGMSTData');
+        verticeFilePath = ['../','task','_time', num2str(timeLimit)];
+        verticesFileName = fullfile(verticeFilePath, [num2str(numel(C)), 'inst',...
+            num2str(numel(C) * discretizedLevel), '.clu.vertices']);
+        
+        
+        generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task', subsetId);
+        rmpath('generateGMSTData');
+        
+        % run gmst
+        % addpath( '../codigo_gmst/');
+        dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+        tic;
+        system(['../codigo_gmst/gmst -all ', dataFile]);
+        fprintf(1,'it takes %f second\n', toc);
+        % rmpath( '../codigo_gmst/');
+        saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far, subsetId);
+        
+        computedPosFileName = fullfile(workingDir, 'computedPos.mat');
+        load(computedPosFileName);
+        if(isDraw)      %plot the unordered results
+            for i = 1: size(camConnect,1)
+                pts = calculatedPos(:, camConnect(i,:));
+                figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
+            end
+        end
+        
+%         table = accumulateVotes(table, camConnect, subsetId);
+        table = accumulateVotesForOne(camConnect, subsetId, table, imageId);
+    end
 end
 
-table = accumulateVotes(table, camConnect, subsetId);
-
-end
+save xxx.mat;
 
 costComputedPos = computeCost(calculatedPos', camConnect);
 fprintf(1, 'cost with unknown order is %f\n', costComputedPos);

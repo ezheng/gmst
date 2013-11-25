@@ -6,7 +6,9 @@ if(~exist(workingPath, 'dir'))
 end
 
 % The number of cameras is the same to the number 3d points
-points3D = generate3DPoints(numOfCameras, 1, false);
+% points3D = generate3DPoints(numOfCameras, 1, false);
+points3D = generate3DPoints_multipleLanes(numOfCameras, 1, true);
+
 save(fullfile(workingPath, 'GT3DPoints.mat'), 'points3D');
 
 % generate camera poses and 2d measures, and images

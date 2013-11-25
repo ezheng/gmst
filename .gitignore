@@ -5,4 +5,5 @@ plot
 .project
 makefile.*
 *.txt
+*.m~
 *.dat

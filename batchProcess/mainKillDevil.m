@@ -3,7 +3,11 @@
 function mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHead, isDraw)
 
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
+close all
 
+if mod(numOfCameras,2) == 1
+    numOfCameras = numOfCameras + 1;
+end
 
 workingDir = fullfile(workingPathHead, ['task','_time',num2str(timeLimit)]...
     , ['task_', num2str(numOfCameras)] );
@@ -32,15 +36,15 @@ rmpath('./generateSimulatedData');
 
 % % ----------------------------------------------------------
 matFileFull = fullfile(workingDir, [taskName,'.mat']);
-if(~exist( matFileFull, 'file'))
+% if(~exist( matFileFull, 'file'))
     measurement2DFileName = fullfile(workingDir, 'pointsPos.mat');
     nvmFileName = fullfile(workingDir, [taskName, '.nvm']);
     load(measurement2DFileName);
     [camera, points3D] = extractNVMData(nvmFileName);
     save(matFileFull);
-else
-    load(matFileFull, 'pointsPos', 'camera', 'points3D');
-end
+% else
+%     load(matFileFull, 'pointsPos', 'camera', 'points3D');
+% end
 
 % draw all the cameras and 3d points
 if(isDraw)
@@ -88,6 +92,15 @@ CC = [C{:}]; ind = ([CC.detected] == true);
 C = C(ind);
 save(fullfile(workingDir, 'C.mat'), 'C');
 
+for i = 1:numel(C)    
+    if(C{i}.detected == true)
+        p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
+        if(isDraw)
+%             hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
+        end
+    end
+end
+
 if(knownOrder)
     
     [Traj, Traj2] = TrajectoryReconstruction(C); % Reconstruction w/o predefined number of basis    
@@ -97,15 +110,19 @@ if(knownOrder)
         figure(h);
         hold on; plot3(Pts3d(range,1), Pts3d(range,2), Pts3d(range,3), 'k*'); hold off;
     end
+    cost = computeCost(Pts3d); % The cost of results that are computed with given order
+    fprintf(1, 'cost with known order is: %f\n', cost ); 
 end
 
-for i = 1:numel(C)    
-    if(C{i}.detected == true)
-        p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
-        if(isDraw)
-            hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
-        end
-    end
+
+groundTruthFile = fullfile(workingDir, 'GT3DPoints.mat');
+if( exist(groundTruthFile, 'file'))
+   gt = load(groundTruthFile); 
+   cost = computeCost(gt.points3D');
+   fprintf(1, 'cost of groundTruth is: %f\n', cost ); 
+    if(isDraw)   
+       figure(h); hold on; plot3(gt.points3D(1,:), gt.points3D(2,:), gt.points3D(3,:), 'r*--','MarkerSize',5); hold off;      
+    end    
 end
 
 addpath('generateGMSTData');
@@ -119,37 +136,20 @@ rmpath('generateGMSTData');
 % run gmst
 % addpath( '../codigo_gmst/');
 dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+tic;
 system(['../codigo_gmst/gmst -all ', dataFile]);
+fprintf(1,'it takes %f second\n', toc);
 % rmpath( '../codigo_gmst/');
-
 saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far);
 
-% save mat file
 computedPosFileName = fullfile(workingDir, 'computedPos.mat');
 load(computedPosFileName);
 if(isDraw)      %plot the unordered results
     for i = 1: size(camConnect,1)
         pts = calculatedPos(:, camConnect(i,:));
-        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'g*--','MarkerSize',5); hold off;
+        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
     end       
 end
 
-if(knownOrder)
-    cost = computeCost(Pts3d); % The cost of results that are computed with given order
-    fprintf(1, 'cost with known order is: %f\n', cost ); 
-end
-
-costComputedPos = computeCost(calculatedPos');
+costComputedPos = computeCost(calculatedPos', camConnect);
 fprintf(1, 'cost with unknown order is %f\n', costComputedPos);
-
-groundTruthFile = fullfile(workingDir, 'GT3DPoints.mat');
-if( exist(groundTruthFile, 'file'))
-   gt = load(groundTruthFile); 
-   cost = computeCost(gt.points3D');
-   fprintf(1, 'cost of groundTruth is: %f\n', cost ); 
-    if(isDraw)   
-       figure(h); hold on; plot3(gt.points3D(1,:), gt.points3D(2,:), gt.points3D(3,:), 'r*--','MarkerSize',5); hold off;      
-    end    
-end
-
-
