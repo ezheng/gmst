@@ -15,7 +15,9 @@ cameraC = rand(3,numOfCameras);
 cameraC = cameraC - 0.5;
 
 % project it on the same plane
-    
+  % project the 3d points onto the same plane with other 3d points.
+[u, s, ~] = svd(points3D);    
+cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);  
 
 % -----------------------------------------------------------------
 % scale = sqrt(sum(cameraC.^2, 1));
@@ -25,9 +27,7 @@ cameraC = cameraC ./ repmat(sqrt(sum(cameraC .^2 ,1)), 3,1);
 cameraC = repmat(centerOfPoints, 1, size(cameraC, 2)) + cameraC .* (maxRadius * 2 + rand(size(cameraC)) * maxRadius);
 
 
-% project the 3d points onto the same plane with other 3d points.
-[u, s, ~] = svd(points3D);    
-cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);
+
 
 imageWidth = K(1,3) * 2;
 imageHeight = K(2,3) * 2;

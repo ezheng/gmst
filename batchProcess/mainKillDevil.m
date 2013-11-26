@@ -3,12 +3,12 @@
 function mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHead, isDraw)
 
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
-
+close all
 
 workingDir = fullfile(workingPathHead, ['task','_time',num2str(timeLimit)]...
     , ['task_', num2str(numOfCameras)] );
 taskName = ['task', num2str(numOfCameras)];
-knownOrder = true;
+knownOrder = false;
 %timeLimit = 100;
 %discretizedLevel = 10;
 %near = 18; far = 28;
@@ -32,15 +32,15 @@ rmpath('./generateSimulatedData');
 
 % % ----------------------------------------------------------
 matFileFull = fullfile(workingDir, [taskName,'.mat']);
-if(~exist( matFileFull, 'file'))
+% if(~exist( matFileFull, 'file'))
     measurement2DFileName = fullfile(workingDir, 'pointsPos.mat');
     nvmFileName = fullfile(workingDir, [taskName, '.nvm']);
     load(measurement2DFileName);
     [camera, points3D] = extractNVMData(nvmFileName);
     save(matFileFull);
-else
-    load(matFileFull, 'pointsPos', 'camera', 'points3D');
-end
+% else
+%     load(matFileFull, 'pointsPos', 'camera', 'points3D');
+% end
 
 % draw all the cameras and 3d points
 if(isDraw)
@@ -99,14 +99,14 @@ if(knownOrder)
     end
 end
 
-for i = 1:numel(C)    
-    if(C{i}.detected == true)
-        p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
-        if(isDraw)
-            hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
-        end
-    end
-end
+% for i = 1:numel(C)    
+%     if(C{i}.detected == true)
+%         p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
+%         if(isDraw)
+%             hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
+%         end
+%     end
+% end
 
 addpath('generateGMSTData');
 verticeFilePath = ['../','task','_time', num2str(timeLimit)];
