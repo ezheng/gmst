@@ -148,7 +148,7 @@ if( exist(groundTruthFile, 'file'))
    cost = computeCost(gt.points3D');
    fprintf(1, 'cost of groundTruth is: %f\n', cost ); 
     if(isDraw)   
-       figure(h); hold on; plot3(gt.points3D(1,:), gt.points3D(2,:), gt.points3D(3,:), 'r*--','MarkerSize',5); hold off;      
+       figure(h); hold on; plot3(gt.points3D(1,:), gt.points3D(2,:), gt.points3D(3,:), 'r*','MarkerSize',5); hold off;      
     end    
 end
 
