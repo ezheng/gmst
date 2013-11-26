@@ -1,0 +1,1 @@
+bsuq -q week -M8 matlab -nodisplay -nojvm -nosplash -r "mainKillDevil(120,60, 100, '~/netscr/ezheng/gmst/', false)"
