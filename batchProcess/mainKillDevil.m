@@ -139,7 +139,7 @@ if(knownOrder)
     fprintf(1, 'cost with known order is: %f\n', cost ); 
 end
 
-costComputedPos = computeCost(calculatedPos');
+costComputedPos = computeCost(calculatedPos', camConnect);
 fprintf(1, 'cost with unknown order is %f\n', costComputedPos);
 
 groundTruthFile = fullfile(workingDir, 'GT3DPoints.mat');

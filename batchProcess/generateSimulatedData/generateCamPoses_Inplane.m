@@ -26,8 +26,8 @@ cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);
 cameraC = cameraC ./ repmat(sqrt(sum(cameraC .^2 ,1)), 3,1);
 cameraC = repmat(centerOfPoints, 1, size(cameraC, 2)) + cameraC .* (maxRadius * 2 + rand(size(cameraC)) * maxRadius);
 
-
-
+% project again
+cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);  
 
 imageWidth = K(1,3) * 2;
 imageHeight = K(2,3) * 2;
