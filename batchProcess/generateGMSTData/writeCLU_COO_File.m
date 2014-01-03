@@ -23,17 +23,24 @@ clusterID = clusterID(:);
 
 % write edge
 edgesAndCost = [edges-1, edgesCost];
-fid = fopen(outputFileName,'w');
-assert(fid>0)
-fprintf(fid,'%d\n', clusterID);
-fprintf(fid, '\n');
-tic
-for i=1:size(edgesAndCost, 1)
-    fprintf(fid, '%d ', edgesAndCost(i,:));
-    fprintf(fid, '\n');
-end
-toc
-fclose(fid);
+
+addpath('F:\Enliang\matlab\GMST_subprob\gmst\batchProcess\mex\build64\Debug');
+% edgesAndCost = 
+removeEdges(int32(clusterID), int32(edgesAndCost), outputFileName);
+rmpath('F:\Enliang\matlab\GMST_subprob\gmst\batchProcess\mex\build64\Debug');
+
+% fid = fopen(outputFileName,'w');
+% assert(fid>0)
+% fprintf(fid,'%d\n', clusterID);
+% fprintf(fid, '\n');
+% tic
+% for i=1:size(edgesAndCost, 1)
+%     fprintf(fid, '%d ', edgesAndCost(i,:));
+%     fprintf(fid, '\n');
+% end
+% toc
+% fclose(fid);
+
 % tic
 % dlmwrite(outputFileName, int64(edgesAndCost), 'delimiter', ' ', '-append', 'precision', '%d');
 % toc
