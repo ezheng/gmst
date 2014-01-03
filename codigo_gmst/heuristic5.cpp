@@ -78,6 +78,10 @@ vector<int> Heuristic5::calculateMST(vector<int> &vertices){
  * Metodo que calcula uma MST com o grafo passado, utilizando apenas os vertices do vetor 'vertices'
  * Utiliza o algoritmo de PRIM
  * Retorna o custo da árvore gerada
+	MST method that calculates a graph with the past using only the vertices vector "vertices"
+   Uses the algorithm PRIM
+      Returns the value of the generated tree
+
  */
 int Heuristic5::getMSTCost(vector<int> &vertices){
 

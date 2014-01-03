@@ -267,10 +267,12 @@ int Searcher::ils(vector<int> &solution, int cost){
 		int cluster = order[round];
 		//Salvando a solucao corrente
 		vector<int> currSolution = solution;
-		currSolution[cluster] = Graph::graph.clusters[cluster][random()%(Graph::graph.clusters[cluster].size())];
+		//currSolution[cluster] = Graph::graph.clusters[cluster][random()%(Graph::graph.clusters[cluster].size())];
+		currSolution[cluster] = Graph::graph.clusters[cluster][rand()%(Graph::graph.clusters[cluster].size())];
 		for(unsigned int i=0; i < Graph::graph.neighbors[cluster].size(); i++){
 			int c = Graph::graph.neighbors[cluster][i];
-			currSolution[c] = Graph::graph.clusters[c][random()%(Graph::graph.clusters[c].size())];
+			//currSolution[c] = Graph::graph.clusters[c][random()%(Graph::graph.clusters[c].size())];
+			currSolution[c] = Graph::graph.clusters[c][rand()%(Graph::graph.clusters[c].size())];
 		}
 		//Construindo uma nova solucao a partir de "auxSolution"
 		int currCost = localSearch(currSolution);

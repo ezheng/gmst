@@ -65,7 +65,8 @@ void Evolution::initialize(){
 	vector<int> vertices(Graph::graph.numberOfClusters);
 	for(unsigned int cluster = 0; cluster < Graph::graph.numberOfClusters; cluster++){
 		int numVertices = Graph::graph.clusters[cluster].size();
-		vertices[cluster] = Graph::graph.clusters[cluster][random()%numVertices];
+		vertices[cluster] = Graph::graph.clusters[cluster][rand()%numVertices];
+		//vertices[cluster] = Graph::graph.clusters[cluster][random()%numVertices];
 	}
 
 	double startTime1 = cpuTime();

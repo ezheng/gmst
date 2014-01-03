@@ -9,8 +9,12 @@
 #include <cstdlib>
 #include <cstdio>
 #include "util.h"
-#include <sys/timeb.h>
-#include <sys/resource.h>
+
+#include <Windows.h>
+#include <iostream>
+
+//#include <sys/timeb.h>
+//#include <sys/resource.h>
 
 #ifdef MTWISTER
 /* Code from Mersenne twister random number generator */
@@ -139,19 +143,39 @@ inline double doubleRandom(const double maxValue) {
 }
 
 double wallClock() {
-	struct timeb tp;
+
+	std::cerr << "error to call the function wallClock" << std::endl;
+	return -1.0;
+
+	/*struct timeb tp;
 	double mili;
 
 	ftime(&tp);
 	mili = (double)( (tp.time)+((double)tp.millitm)/1000);
 
-	return mili;
+	return mili;*/
 }
 
 double cpuTime() {
-	static struct rusage usage;
-	getrusage(RUSAGE_SELF, &usage);
-	return ((double)usage.ru_utime.tv_sec)+(((double)usage.ru_utime.tv_usec)/((double)1000000));
+	//static struct rusage usage;
+	//getrusage(RUSAGE_SELF, &usage);	//RUSAGE_SELF 	Just the current process. 
+	//return ((double)usage.ru_utime.tv_sec)+(((double)usage.ru_utime.tv_usec)/((double)1000000));
+
+	HANDLE hProcess = GetCurrentProcess();
+	FILETIME ftCreation, ftExit, ftKernel, ftUser;
+	SYSTEMTIME stUser;
+	GetProcessTimes(hProcess, &ftCreation, &ftExit, &ftKernel, &ftUser);
+	FileTimeToSystemTime(&ftUser, &stUser);
+
+	double allTime = 0.0;	// in second
+	allTime += stUser.wHour * 60 *60;
+	allTime += stUser.wMinute * 60;
+	allTime += stUser.wSecond;
+	allTime += static_cast<double>(stUser.wMilliseconds) / 1000.0;
+	return allTime;
+	// long int tv_sec 	This represents the number of whole seconds of elapsed time. 
+	//long int tv_usec 
+	//	This is the rest of the elapsed time (a fraction of a second), represented as the number of microseconds. It is always less than one million.
 }
 
 

@@ -22,7 +22,7 @@ Tabu::Tabu(){
 	maxIterationsForRandomSelection = 50;	
 
 	//Fator que ajusta a intensidade da diversificação
-	factor = 0.05;
+	factor = 0.05f;
 	
 	//Armazena quantas iterações sem melhora são permitidas para cada estrutura de vizinhança
   	noImprovementIterations.push_back(250);
@@ -421,11 +421,12 @@ vector<int> Tabu::selectClusters(){
 					flag = false;				
 			}						
 			//Valor máximo até que a roleta irá girar...
-			int maxValue = (int)(round(clustersRoulette.back()*10));
+			//int maxValue = (int)(round(clustersRoulette.back()*10));
+			int maxValue = (int)(floor(clustersRoulette.back()*10 + 0.5f));
 
 			//Seleciona um dos clusters enquanto o escolhido já tiver sido escolhido anteriormente
 			do{
-				float value = rand()%maxValue/10.0;
+				float value = rand()%maxValue/10.0f;
 				
 				cluster = 0;				
 				while(clustersRoulette[cluster] < value)

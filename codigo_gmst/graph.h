@@ -71,7 +71,7 @@ public:
 	//vector< list<int> > adjVertices;
 
 	/**
-	 * Armazena, para cada vértice, a lista dos clusters adjacentes a ele
+	 * Armazena, para cada vértice, a lista dos clusters adjacentes a ele : Stores, for each vertex, the list of clusters adjacent to it
 	 */
 	vector< list<int> > adjClusters;
 	

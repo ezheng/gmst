@@ -43,6 +43,7 @@ bool Heap::empty(){
 /**
 * Metodo que remove e retorna o elemento com menor valor do heap, ou seja, o primeiro
 * Se o Heap estiver vazio, retorna -1
+* Method that removes and returns the element with the lowest value of the heap, ie the first If the heap is empty, return -1
 */
 int Heap::findAndDeleteMin(){
 
@@ -52,9 +53,10 @@ int Heap::findAndDeleteMin(){
 			HeapMember member2 = members[size-1];
 	
 			members[0] = member2;			
-			members.erase(members.end());
-	
-			down(1,member2);
+			//members.erase(members.end());
+			members.pop_back();
+			if(!empty())
+				down(1,member2);
 	
 			return member.id;
 	
