@@ -6,7 +6,10 @@ function writeCLU_COO_File(cams, numOfCams, near, far, discretizedLevel, outputP
 % near = 0; far = 12;
 % outputPath = 'F:\Enliang\virtualMachine\shareFolder\gmst\data\';
 % timeLimit is the time threshold (in seconds) for the gmst application 
+
 % -----------------------------------------------------
+% the variable 'numOfCams' is only used for naming the gmst inputing file.
+
 
 % cams = C(1:numOfCams);
 outputFileName =fullfile(outputPath, [num2str(numOfCams),'inst', num2str(numOfCams * discretizedLevel) , '.clu']);
@@ -17,7 +20,7 @@ nodes = nodes * 100;
 edgesCost = round(edgesCost);
 % first write cluster ID
 
-clusterID = [1:numOfCams];
+clusterID = [1: numel(cams)];
 clusterID = repmat( clusterID, discretizedLevel,1);
 clusterID = clusterID(:);
 

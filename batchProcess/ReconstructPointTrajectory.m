@@ -75,7 +75,7 @@ tic
 
     minimize(  sub );
     subject to
-    norm(QQ * x - qq,2) <=1;
+    norm(QQ * x - qq,2) <=0.01;
     cvx_end
     pts = x;
     
