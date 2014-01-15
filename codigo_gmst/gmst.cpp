@@ -261,6 +261,7 @@ void execute(){
 	//Setando a semente que sera usada para calcular os numeros aleatorios
 	if(Parameters::getInstance().SEED == -1){
 		int seed = time(NULL);
+		seed = 0;
 		Parameters::setSeed(seed);
 	}
 	srand(Parameters::getInstance().SEED);

@@ -87,8 +87,8 @@ public:
     vector<int> clusterOf;
 
 	/**
-	* Seta a distancia entre cada par de clusters
-	* minDistance[0][1] armazena a menor distância entre os clusters 1 e 2
+	* Seta a distancia entre cada par de clusters	= set the distance between each pair of clusters
+	* minDistance[0][1] armazena a menor distância entre os clusters 1 e 2 = minDistance[0][1] stores the shortest distance between the clusters 1 and 2
 	* maxDistance[0][1] armazena a maior distância entre os clusters 1 e 2
 	*/
 	vector< vector<int> > minDistances;

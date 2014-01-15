@@ -33,7 +33,7 @@ vector<int> Heuristic9::calculateRandomTree(){
 }
 
 /**
-* Metodo que cria os grupos de clusters de forma gulosa
+* Metodo que cria os grupos de clusters de forma gulosa = Method that creates the cluster groups of greedy fashion
 */
 vector<int> Heuristic9::createClusters(int numberOfSets){
 
@@ -88,12 +88,19 @@ vector<int> Heuristic9::createClusters(int numberOfSets){
 	
 			//Procura o centro mais proximo do cluster
 			for(unsigned int j=0; j < setsOfClusters.size(); j++){
-
+//				std::cout<< "sets of clusters front\t" << setsOfClusters[j].front() << std::endl;
+				if(i == 26){
+					std::cout << setsOfClusters[j].front() << std::endl;
+					std::cout << "clusterId  " << i << std::endl;
+					std::cout<< Graph::graph.minDistances[i][setsOfClusters[j].front()] << std::endl;
+				}
 				if(Graph::graph.minDistances[i][setsOfClusters[j].front()] < minDistance){
 					closestCluster = j;
 					minDistance = Graph::graph.minDistances[i][setsOfClusters[j].front()];
 				}
 			}
+			std::cout << "set of cluster size" << setsOfClusters.size() << " ";
+			std::cout << "closestCluster" << closestCluster << std::endl;
 			setsOfClusters[closestCluster].push_back(i);
 			sets[i] = closestCluster;
 		}

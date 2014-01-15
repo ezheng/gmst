@@ -26,7 +26,7 @@ vector<int> Heuristic1::calculateTree(){
 	//Para cada cluster como raiz
 	for(unsigned int root = 0; root < Graph::graph.numberOfClusters; root++){
 	
-		//Armazena o vertice de cada cluster
+		//Armazena o vertice de cada cluster = Stores the vertex of each cluster
 		vector<int> tree(Graph::graph.numberOfClusters,NONE);
 		//Armazena a distâcia de cada cluster ao cluster raiz
 		vector<int> distances(Graph::graph.numberOfClusters, INFINITE);

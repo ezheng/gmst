@@ -85,7 +85,7 @@ void Graph::createEdgesArray(vector<int> vertices1, vector<int> vertices2, vecto
 		
 	int totalCost = 0;
 	for(unsigned int i=0; i < vertices1.size(); i++){
-			
+		
 		edges[i][VERTEX1] = vertices1[i];
 		edges[i][VERTEX2] = vertices2[i];
 		edges[i][COST] = edgesCost[i];
@@ -361,6 +361,7 @@ void Graph::reductionTests(){
 					i++;
 				}
 				if(removeEdge){
+					std::cout << "edges removed" << std::endl;
 					it = edgesAux.erase(it);
 					exists[vertex1][vertex2] = false;
 					exists[vertex2][vertex1] = false;
