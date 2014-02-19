@@ -23,9 +23,9 @@ vector<int> Heuristic6::calculateTree(){
 	int numberOfComponents = Graph::graph.numberOfClusters;
 	SetUnion set(numberOfComponents);
 
-	//Como as arestas do grafo ja estao ordenadas pelos seus pesos
-	//consider-sea cada aresta na ordem em que estao armazenadas
-	//Enquanto ainda existem componentes desconexas no grafo
+	//Como as arestas do grafo ja estao ordenadas pelos seus pesos = As the graph edges are already sorted by their weights
+	//consider-sea cada aresta na ordem em que estao armazenadas = sea​​-consider each edge in the order they are stored
+	//Enquanto ainda existem componentes desconexas no grafo = While there are still disconnected components in the graph
 	unsigned int edge=0;
 	while((edge < Graph::graph.edges.size())&&(numberOfComponents > 1)){
 
@@ -35,7 +35,7 @@ vector<int> Heuristic6::calculateTree(){
 
 		int vertex2 = Graph::graph.edges[edge][VERTEX2];
 		unsigned int cluster2 = Graph::graph.clusterOf[vertex2];
-	
+		//If the vertices of the edge are already in solution and clusters are in different components, is a union of components
 		//Se os vertices da aresta ja estao na solucao e os clusters estao em componentes diferentes, faz a uniao dos componentes
 		if(((solution[cluster1] == NONE)||(solution[cluster1] == vertex1)) && ((solution[cluster2] == NONE)||(solution[cluster2] == vertex2)) && (set.join(cluster1, cluster2))){
 			

@@ -40,8 +40,8 @@ vector<int> Heuristic9::createClusters(int numberOfSets){
 	vector<int> sets(Graph::graph.numberOfClusters);
 	vector<bool> choosenCenters(Graph::graph.numberOfClusters, false);
 
-	//********* Primeira fase do K-Means *********
-	//Escolhendo o primeiro centro
+	//********* Primeira fase do K-Means ********* First phase of the K-Mean
+	//Escolhendo o primeiro centro = Choosing the first center
 	int center = rand()%Graph::graph.numberOfClusters;
 	vector< list<int> > setsOfClusters(1);
 	setsOfClusters[0].push_back(center);
@@ -51,7 +51,7 @@ vector<int> Heuristic9::createClusters(int numberOfSets){
 
 		int maxDistance = 0;
 		int farthestCluster = -1;
-		//Calculando a distancia de todos os clusters aos centros ja escolhidos
+		//Calculando a distancia de todos os clusters aos centros ja escolhidos = Calculating the distance of all the clusters centers already chosen
 		for(unsigned int cluster=0; cluster < Graph::graph.numberOfClusters; cluster++){
 
 			//Se o cluster ja nao for um centro
@@ -69,7 +69,7 @@ vector<int> Heuristic9::createClusters(int numberOfSets){
 				}
 			}
 		}
-		//O novo centro será o cluster mais distante dos outros
+		//O novo centro será o cluster mais distante dos outros = The new center will be the most distant cluster of other
 		list<int> cluster;
 		cluster.push_back(farthestCluster);
 		choosenCenters[farthestCluster] = true;

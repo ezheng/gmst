@@ -13,7 +13,7 @@ Heuristic1::Heuristic1(){}
 Heuristic1::~Heuristic1(){}
 
 /**
- * Adaptacao de Prim gulosa
+ * Adaptacao de Prim gulosa = Adaptation of Prim greedy
  */
 vector<int> Heuristic1::calculateTree(){
 

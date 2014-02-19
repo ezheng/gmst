@@ -39,7 +39,9 @@ int GRASP::adaptiveCalculateTree(){
 	initialize();
 
 	//Execução das heurísticas completamente gulosas = Execution of completely greedy heuristics
-	int maxNoUpdateIterations = Graph::graph.numberOfClusters/10;
+	int maxNoUpdateIterations = std::max(Graph::graph.numberOfClusters/10, 1u) ;
+	//int maxNoUpdateIterations = std::min(Graph::graph.numberOfClusters/10, 1u) ;
+
 	unsigned int heuristic = 0;
 	while((heuristic < greedHeuristics.size()) && (!stopCriterionReached())){
 

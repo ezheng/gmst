@@ -36,7 +36,7 @@ vector<int> Heuristic7::defineOrder(){
 }
 
 /**
-* Metodo que calcula a avore
+* Metodo que calcula a avore = Method that calculates the tree
 */
 vector<int> Heuristic7::calculateTree(){
 
@@ -44,7 +44,7 @@ vector<int> Heuristic7::calculateTree(){
 	vector<int> solution(Graph::graph.numberOfClusters);
 
 	vector<int> order = defineOrder();
-	//Para cada cluster, procura o vertice mais proximo dos outros clusters
+	//Para cada cluster, procura o vertice mais proximo dos outros clusters = For each cluster, looking for the nearest vertex of the other clusters
 	for(unsigned int i=0; i < Graph::graph.numberOfClusters; i++){
 
 		unsigned int cluster = order[i];
@@ -52,7 +52,7 @@ vector<int> Heuristic7::calculateTree(){
 		int bestVertex = NONE;
 		long minDistance = INFINITE;
 
-		//Para cada vertice do cluster, soma sua distancia aos vertices dos outros clusters
+		//Para cada vertice do cluster, soma sua distancia aos vertices dos outros clusters = For each vertex of the cluster, its distance sum to the vertices of the other clusters
 		for(unsigned int j=0; j < vertices.size();j++){
 			int vertex = vertices[j];
 			long totalDistance = 0;

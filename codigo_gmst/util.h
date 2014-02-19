@@ -11,8 +11,11 @@
 #  define UTIL_H
 
 #include <ctime>
-//#include <unistd.h>
-//#include <sys/times.h>
+
+#ifdef __linux__ 
+	#include <unistd.h>
+	#include <sys/times.h>
+#endif
 
 void randomize();
 

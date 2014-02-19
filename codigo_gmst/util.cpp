@@ -10,12 +10,14 @@
 #include <cstdio>
 #include "util.h"
 
-#include <Windows.h>
-#include <iostream>
-
-//#include <sys/timeb.h>
-//#include <sys/resource.h>
-
+#ifdef _WIN32 || _WIN64
+	#include <Windows.h>
+	#include <iostream>
+#endif
+#ifdef __linux___
+	#include <sys/timeb.h>
+	#include <sys/resource.h>
+#endif
 #ifdef MTWISTER
 /* Code from Mersenne twister random number generator */
 /* http://www.math.keio.ac.jp/~matumoto/emt.html      */
@@ -157,10 +159,11 @@ double wallClock() {
 }
 
 double cpuTime() {
-	//static struct rusage usage;
-	//getrusage(RUSAGE_SELF, &usage);	//RUSAGE_SELF 	Just the current process. 
-	//return ((double)usage.ru_utime.tv_sec)+(((double)usage.ru_utime.tv_usec)/((double)1000000));
-
+#ifdef __linux__
+	static struct rusage usage;
+	getrusage(RUSAGE_SELF, &usage);	//RUSAGE_SELF 	Just the current process. 
+	return ((double)usage.ru_utime.tv_sec)+(((double)usage.ru_utime.tv_usec)/((double)1000000));
+#elif defined __WIN32 || _WIN64 
 	HANDLE hProcess = GetCurrentProcess();
 	FILETIME ftCreation, ftExit, ftKernel, ftUser;
 	SYSTEMTIME stUser;
@@ -176,6 +179,9 @@ double cpuTime() {
 	// long int tv_sec 	This represents the number of whole seconds of elapsed time. 
 	//long int tv_usec 
 	//	This is the rest of the elapsed time (a fraction of a second), represented as the number of microseconds. It is always less than one million.
+#else
+	#error "unknown platform"
+#endif
 }
 
 
