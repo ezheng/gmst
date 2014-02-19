@@ -5,6 +5,9 @@ function mainKillDevil_useSubsetOfImages(numOfCameras, discretizedLevel, timeLim
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
 close all
 
+subProbTimeLimit = 8;
+
+
 if mod(numOfCameras,2) == 1
     numOfCameras = numOfCameras + 1;
 end
@@ -26,7 +29,6 @@ addpath('./generateSimulatedData');
 save(fullfile(workingDir, 'dataRangeNearFar.mat'), 'near', 'far');
 rmpath('./generateSimulatedData');
 % =========================================================================
-
 
 
 % % ----------------------------------------------------------
@@ -87,14 +89,14 @@ CC = [C{:}]; ind = ([CC.detected] == true);
 C = C(ind);
 save(fullfile(workingDir, 'C.mat'), 'C');
 
-for i = 1:numel(C)    
-    if(C{i}.detected == true)
-        p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
-        if(isDraw)
-%             hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
-        end
-    end
-end
+% for i = 1:numel(C)    
+%     if(C{i}.detected == true)
+%         p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
+%         if(isDraw)
+%              hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
+%         end
+%     end
+% end
 
 % if(knownOrder)
 %     
@@ -121,6 +123,7 @@ if( exist(groundTruthFile, 'file'))
 end
 
 table = zeros(numOfCameras, numOfCameras);
+accountTable = zeros(numOfCameras, numOfCameras);
 
 numOfCamPerSubset = 20;
 for imageId = 1: numel(C)
@@ -131,39 +134,49 @@ for imageId = 1: numel(C)
         subsetId = [allsubsetId{count}, imageId]; subsetId = unique(subsetId);
         
         addpath('generateGMSTData');
-        verticeFilePath = ['../','task','_time', num2str(timeLimit)];
+        generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task', subsetId, subProbTimeLimit);
+        rmpath('generateGMSTData');
+        
+         verticeFilePath = ['../','task','_time', num2str(timeLimit),'/sub_time',num2str(subProbTimeLimit)];
         verticesFileName = fullfile(verticeFilePath, [num2str(numel(C)), 'inst',...
             num2str(numel(C) * discretizedLevel), '.clu.vertices']);
         
-        
-        generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task', subsetId);
-        rmpath('generateGMSTData');
-        
         % run gmst
         % addpath( '../codigo_gmst/');
-        dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+        dataFile = fullfile(verticeFilePath, [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
         tic;
-        system(['../codigo_gmst/gmst -all ', dataFile]);
+%         system(['../codigo_gmst/gmst -all ', dataFile]);  %linux
+        system(['..\\codigo_gmst\\gmst.exe -all ', dataFile])   %windows   
         fprintf(1,'it takes %f second\n', toc);
         % rmpath( '../codigo_gmst/');
         saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far, subsetId);
         
         computedPosFileName = fullfile(workingDir, 'computedPos.mat');
         load(computedPosFileName);
-        if(isDraw)      %plot the unordered results
-            for i = 1: size(camConnect,1)
-                pts = calculatedPos(:, camConnect(i,:));
-                figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
-            end
-        end
+%         if(isDraw)      %plot the unordered results
+%             for i = 1: size(camConnect,1)
+%                 pts = calculatedPos(:, camConnect(i,:));
+%                 figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
+%             end
+%         end
         
-%         table = accumulateVotes(table, camConnect, subsetId);
-        table = accumulateVotesForOne(camConnect, subsetId, table, imageId);
+         [table, accountTable] = accumulateVotes(table, camConnect, subsetId, accountTable);
+%         table = accumulateVotesForOne(camConnect, subsetId, table, imageId);
     end
 end
 
-save xxx.mat;
+table = table./accountTable;
+save tjunc.mat;
+runOnPartialGraph(workingDir, timeLimit, near, far, discretizedLevel, table,C, numOfCameras, isDraw, h);
 
-costComputedPos = computeCost(calculatedPos', camConnect);
-fprintf(1, 'cost with unknown order is %f\n', costComputedPos);
+
+
+
+% save xxx.mat;
+% 
+% costComputedPos = computeCost(calculatedPos', camConnect);
+% fprintf(1, 'cost with unknown order is %f\n', costComputedPos);
+
+
+
 

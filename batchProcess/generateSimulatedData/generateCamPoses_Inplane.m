@@ -1,4 +1,4 @@
-function [camera, near, far ] = generateCamPoses_Inplane(numOfCameras, points3D)
+function [camera, near, far ] = generateCamPoses_Inplane(numOfCameras, points3D, orientation)
 
 % generate rotation and translation
 
@@ -11,23 +11,63 @@ maxRadius = max(radius);
 focalLength = 1024;
 K = [focalLength, 0 512; 0 focalLength 384; 0 0 1];
 
-cameraC = rand(3,numOfCameras);
-cameraC = cameraC - 0.5;
+ cameraC = zeros(3,numOfCameras);
+ 
+ [u, s, ~] = svd(points3D);
+ 
+ if( s(3,3) > 1e-6)
+     [B, ~, ~] = ransacfitplane(points3D , 0.1);
+     u(:,3) = B(1:3)/norm(B(1:3));
+ end
+ 
+for i = 1:numOfCameras
+    while(true)
+%       cameraC(:,i) = rand(3,1)-0.5;
+        direction = rand(3,1)-0.5;
+        direction = direction - u(:,3) * (u(:,3)' * direction); 
+        direction = direction/norm(direction);
+%         direction = cameraC(:,i) - points3D(:,i); direction = direction/norm(direction);
+        
+        
+        
+        if( abs(direction'*orientation(:,1)) <1 && abs(direction'*orientation(:,1))>0)
+            direction'*orientation
+            cameraC(:,i) = points3D(:,i) + direction * 5*(rand(1)+1);
+           break; 
+        end
+    end
+end
+
+
+% cameraC = cameraC - 0.5;
 
 % project it on the same plane
   % project the 3d points onto the same plane with other 3d points.
-[u, s, ~] = svd(points3D);    
-cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);  
+    
+% cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);  
 
 % -----------------------------------------------------------------
 % scale = sqrt(sum(cameraC.^2, 1));
 % cameraC = cameraC ./ repmat( scale, 3, 1 ); %normalize
 % cameraC = cameraC * (maxRadius * 10) + rand(size(cameraC)) * 2 *maxRadius;
-cameraC = cameraC ./ repmat(sqrt(sum(cameraC .^2 ,1)), 3,1);
-cameraC = repmat(centerOfPoints, 1, size(cameraC, 2)) + cameraC .* (maxRadius * 2 + rand(size(cameraC)) * maxRadius);
+
+% cameraC = cameraC ./ repmat(sqrt(sum(cameraC .^2 ,1)), 3,1);
+% cameraC = repmat(centerOfPoints, 1, size(cameraC, 2)) + cameraC .* (maxRadius * 2 + rand(size(cameraC)) * maxRadius);
 
 % project again
-cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);  
+% cameraC = cameraC - u(:,3) * (u(:,3)' * cameraC);  
+
+
+% for i = 1:numOfCameras
+% %     while(true)
+% %       cameraC(:,i) = rand(3,1)-0.5;
+% %         direction = rand(3,1)-0.5; direction = direction/norm(direction);
+% %         direction = cameraC(:,i) - points3D(:,i); direction = direction/norm(direction);
+%         direction = (cameraC(:,i)-points3D(:,i)) / norm(cameraC(:,i)-points3D(:,i));
+%         direction'*orientation        
+% %     end
+% end
+
 
 imageWidth = K(1,3) * 2;
 imageHeight = K(2,3) * 2;

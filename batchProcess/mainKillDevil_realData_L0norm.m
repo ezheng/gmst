@@ -1,19 +1,20 @@
 %  prepare the camera parameters
 % 
-function mainKillDevil_realData( timeLimit, workingPathHead, isDraw, taskName, discretizedLevel, near, far)
+function mainKillDevil_realData_L0norm( timeLimit, workingPathHead, isDraw, taskName, discretizedLevel, near, far)
 
 %numOfCameras = 100;
 % close all;
 if(nargin == 0)
-    workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst\batchProcess\labelData\';
-    taskName = 'brook3';
-    timeLimit = 30;
+    workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst\';
+    taskName = 'franklin';
+    timeLimit = 400;
     isDraw = true;
-    discretizedLevel = 5;
-    near = 5; far = 12;
+    discretizedLevel = 50;
+%     near = 3; far = 6.5;
+    searchRangeSize = 2;
 end
 
-knownOrder = true;  
+knownOrder = false;  
 rng default;
 originalDir = fullfile(workingPathHead, 'realData', taskName);
 % ============================================================
@@ -99,47 +100,71 @@ if(knownOrder)
     end
 end
 
+% L1NormMethod(C);
+[peopleOrientation, planeParam] = findWalkingOrientation(C,points3D);
+[near, far] = findRange(searchRangeSize, C, planeParam);
+
 numOfCameras = numel(C);
-near = ones(1, numOfCameras) * near;
-far = ones(1,numOfCameras) * far;
+% near = ones(1, numOfCameras) * near;
+% far = ones(1,numOfCameras) * far;
 
 for i = 1:numel(C)    
     if(C{i}.detected == true)
-        p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
+        p = C{i}.C; p = [p+C{i}.ori*near(i), p + C{i}.ori * far(i)];
         if(isDraw)
             hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
         end
     end
 end
 
+
+
+% pt1 = [0,0,0]'; pt2 = pt1 + peopleOrientation(:,1)*2; pt = [pt1,pt2];
+% figure(h); hold on; plot3(pt(1,:), pt(2,:), pt(3,:), 'b'); hold off;
+% pt1 = [0,0,0]'; pt2 = pt1 + peopleOrientation(:,2)*5; pt = [pt1,pt2];
+% figure(h); hold on; plot3(pt(1,:), pt(2,:), pt(3,:), 'b'); hold off;
+
 addpath('generateGMSTData');
-generateGMSTData(taskName, workingDir, timeLimit, near, far, discretizedLevel);
+% generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName);
+generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName,0,0,peopleOrientation);
 rmpath('generateGMSTData');
 
 % run gmst
-% addpath( '../codigo_gmst/');
-% gmstFilePath = 
 
 dataFile = fullfile( fullfile( workingPathHead, [taskName, '_time',num2str(timeLimit)])  , [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
 tic
-system(['../codigo_gmst/gmst -all ', dataFile]);
+system(['..\codigo_gmst\gmst -all ', dataFile]);
 fprintf(1,'it takes %f second\n', toc);
-% rmpath( '../codigo_gmst/');
 
 
 verticesFileName = fullfile(fullfile( workingPathHead, [taskName, '_time',num2str(timeLimit)]), ...
     [num2str(numel(C)), 'inst', num2str(numel(C) * discretizedLevel), '.clu.vertices']);
 saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far);
-
 % save mat file
 computedPosFileName = fullfile(workingDir, 'computedPos.mat');
 load(computedPosFileName);
+
+conditionNum =  computeConditionProb( camConnect, C );
+fprintf(1, 'condition number is:%f\n', conditionNum);
+
+% if(isDraw)      %plot the unordered results
+%     for i = 1: size(camConnect,1)
+%         pts = calculatedPos(:, camConnect(i,:));
+%         figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
+%     end       
+% end
+
+% does the refinement
+resultsRefine = ReconstructPointTrajectory_SumOfNorm(C, camConnect);
 if(isDraw)      %plot the unordered results
     for i = 1: size(camConnect,1)
-        pts = calculatedPos(:, camConnect(i,:));
-        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'g*--','MarkerSize',5); hold off;
+         pts = resultsRefine(:, camConnect(i,:));
+        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
     end       
 end
+costWithNoOrder = computeCost(resultsRefine', camConnect);
+
+% costGivenOrder_plane = usingPlane(C,points3D, h);
 
 if(knownOrder)
     cost = computeCost(Pts3d); % The cost of results that are computed with given order

@@ -3,8 +3,15 @@
 function mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHead, isDraw)
 
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
-close all
+if(nargin == 0)
+    numOfCameras = 40; 
+    discretizedLevel = 40;
+    timeLimit = 4400;
+    workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst';
+    isDraw = true;
+end
 
+% close all
 workingDir = fullfile(workingPathHead, ['task','_time',num2str(timeLimit)]...
     , ['task_', num2str(numOfCameras)] );
 taskName = ['task', num2str(numOfCameras)];
@@ -15,7 +22,7 @@ knownOrder = false;
 if(nargin == 4)
     isDraw = false;
 end
-rng default;
+rng(35,'v5uniform');
 %==========================================================================
 if(knownOrder)
     cd ../cvx;
@@ -23,7 +30,9 @@ if(knownOrder)
     cd ../batchProcess;
 end
 addpath('./generateSimulatedData');
-[near, far] = generateSimulatedData(numOfCameras, workingDir, taskName);
+[near, far, orientation] = generateSimulatedData(numOfCameras, workingDir, taskName);
+
+
 save(fullfile(workingDir, 'dataRangeNearFar.mat'), 'near', 'far');
 rmpath('./generateSimulatedData');
 % =========================================================================
@@ -99,27 +108,34 @@ if(knownOrder)
     end
 end
 
-% for i = 1:numel(C)    
-%     if(C{i}.detected == true)
-%         p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i))/2];
-%         if(isDraw)
-%             hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
-%         end
-%     end
-% end
+% perpendicularDir = computePerpendicularDir(orientation, C);
+% L1pts = L1NormMethod(C, perpendicularDir);
+% L1pts = L1NormMethod(C, orientation);
+%  figure(h); hold on; plot3(L1pts(1,:), L1pts(2,:), L1pts(3,:), 'r*','MarkerSize',5); hold off;  
+ 
+for i = 1:numel(C)    
+    if(C{i}.detected == true)
+        p = C{i}.C; p = [p, p + C{i}.ori * (near(i)+far(i)+3)/2];
+        if(isDraw)
+            hold on; plot3(p(1,:), p(2,:), p(3,:)); hold off;
+        end
+    end
+end
 
 addpath('generateGMSTData');
 verticeFilePath = ['../','task','_time', num2str(timeLimit)];
 verticesFileName = fullfile(verticeFilePath, [num2str(numel(C)), 'inst',...
     num2str(numel(C) * discretizedLevel), '.clu.vertices']);
 
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task');
+generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task',0,0,orientation);
+% generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task');
 rmpath('generateGMSTData');
 
 % run gmst
 % addpath( '../codigo_gmst/');
-dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
-system(['../codigo_gmst/gmst -all ', dataFile]);
+% dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+dataFile = fullfile( fullfile( workingPathHead, ['task', '_time',num2str(timeLimit)])  , [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
+system(['..\codigo_gmst\gmst -all ', dataFile]);
 % rmpath( '../codigo_gmst/');
 
 saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far);
@@ -130,7 +146,7 @@ load(computedPosFileName);
 if(isDraw)      %plot the unordered results
     for i = 1: size(camConnect,1)
         pts = calculatedPos(:, camConnect(i,:));
-        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'g*--','MarkerSize',5); hold off;
+        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'k*--','MarkerSize',5); hold off;
     end       
 end
 
@@ -141,6 +157,7 @@ end
 
 costComputedPos = computeCost(calculatedPos', camConnect);
 fprintf(1, 'cost with unknown order is %f\n', costComputedPos);
+
 
 groundTruthFile = fullfile(workingDir, 'GT3DPoints.mat');
 if( exist(groundTruthFile, 'file'))
