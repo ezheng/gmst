@@ -24,7 +24,7 @@ for i = 1:numOfCameras
     while(true)
 %       cameraC(:,i) = rand(3,1)-0.5;
         direction = rand(3,1)-0.5;
-        direction = direction - u(:,3) * (u(:,3)' * direction); 
+        direction = direction - u(:,3) * (u(:,3)' * direction) + (rand(3,1)-0.5)*0.01; 
         direction = direction/norm(direction);
 %         direction = cameraC(:,i) - points3D(:,i); direction = direction/norm(direction);
         

@@ -19,12 +19,12 @@ end
 
 % 
 
-orientation = zeros(6, numOfCameras);
+orientation = zeros(3, numOfCameras);
 orientation(1:3, 1:end-1) = points3D(:,2:end) - points3D(:,1:end-1); orientation(1:3,end) = orientation(1:3, end-1);
-orientation(4:6, 2:end) = points3D(:,1:end-1) - points3D(:,2:end); orientation(4:6, 1) = orientation(4:6,2);
+% orientation(4:6, 2:end) = points3D(:,1:end-1) - points3D(:,2:end); orientation(4:6, 1) = orientation(4:6,2);
 
 orientation(1:3,:) = orientation(1:3,:)./ repmat(sqrt(sum(orientation(1:3,:).^2)), 3, 1);
-orientation(4:6,:) = orientation(4:6,:)./ repmat(sqrt(sum(orientation(4:6,:).^2)), 3, 1);
+% orientation(4:6,:) = orientation(4:6,:)./ repmat(sqrt(sum(orientation(4:6,:).^2)), 3, 1);
 
 if(visualize)
     figure(1);

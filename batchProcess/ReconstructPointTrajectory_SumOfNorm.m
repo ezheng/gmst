@@ -36,17 +36,25 @@ cvx_end
 points3D = cameraCenterMatrix + directionMatrix .* repmat(x', 3,1);
 
 
+% -------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
+% A = zeros(numOfCameras, numOfCameras);
+% b = zeros(numOfCameras,1);
+% for i = 1:size(camConnect,1)
+%     id1 = camConnect(i,1); id2 = camConnect(i,2);
+%     A( id1, id2) = -dot(C{id1}.ori, C{id2}.ori);
+%     A( id2, id1) = A(id1,id2);
+%     
+%     b(id1) = b(id1) - dot(C{id1}.C - C{id2}.C, C{id1}.ori );
+%     b(id2) = b(id2) - dot(C{id2}.C - C{id1}.C, C{id2}.ori );
+% end
+% 
+% for i = 1:numel(C)
+%     n = sum( A(i,:) ~= 0 );
+%     A(i,i) = n;    
+% end
+% 
+% xx = A\b;
 
 
 

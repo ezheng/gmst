@@ -1,5 +1,8 @@
-function [edges, edgesCost] = computeEdges(nodes, discretizedLevel, orientation)
+function [edges, edgesCost] = computeEdges(nodes, discretizedLevel, orientation, weight)
 
+if(nargin == 3)
+    weight = 5;
+end
 numOfNodes = size(nodes,2);
 numOfCams = numOfNodes / discretizedLevel;
 
@@ -10,7 +13,7 @@ diff = nodes(:,xMesh) - nodes(:,yMesh);
 
 % if(nargin == 2)
     adjanceyMatrix = sum( diff .^2 , 1);
-if(nargin == 3)
+% if(nargin == 3)
 %     diff1 = abs(orientation(:,1)' * diff);
 %     diff2 = abs(orientation(:,2)' * diff);
     if( size(orientation,2) <= 1)
@@ -25,21 +28,25 @@ if(nargin == 3)
     diff1 = cross( oneOrientation1 , diff);
     diff1 = sum(diff1.^2, 1);
     
-    if(size(orientation,1) ==  6 )
-%          oneOrientation2 = repmat(orientation(:,1), 1, numOfCams);     
-         oneOrientation2 = orientation(4:6,:);
-         oneOrientation2 = oneOrientation2(:, id);
-         diff2 = cross( repmat(oneOrientation2(:,2), 1, size(diff,2)), diff);
-         diff2 = sum(diff2.^2, 1);
-         
-         diff1 = min([diff1; diff2], [], 1);
-    end        
-     
-    adjanceyMatrix = adjanceyMatrix + 20*diff1;
-end
+%     if(size(orientation,1) ==  6 )
+% %          oneOrientation2 = repmat(orientation(:,1), 1, numOfCams);     
+%          oneOrientation2 = orientation(4:6,:);
+%          oneOrientation2 = oneOrientation2(:, id);
+% %          diff2 = cross( repmat(oneOrientation2(:,2), 1, size(diff,2)), diff);
+%         
+%         diff2 = cross(oneOrientation2, diff);
+%          diff2 = sum(diff2.^2, 1);
+%          
+%          diff1 = min([diff1; diff2], [], 1);
+%     end        
+%      figure(); hold on; plot(adjanceyMatrix, 'r'); plot(diff1, 'b');
+    adjanceyMatrix = adjanceyMatrix + weight*diff1;
+% end
 
     
 adjanceyMatrix = reshape(adjanceyMatrix, numOfNodes, numOfNodes);
+
+adjanceyMatrix = min( cat(3, adjanceyMatrix, adjanceyMatrix'), [], 3 );     % the original adjancey matrix is not symmetric
 
 mask = kron( eye(numOfCams), -ones(discretizedLevel)) + 1;
 adjanceyMatrix = adjanceyMatrix .* mask;

@@ -1,17 +1,19 @@
 %  prepare the camera parameters
 % 
-function mainKillDevil_realData_L0norm( timeLimit, workingPathHead, isDraw, taskName, discretizedLevel, near, far)
+function mainKillDevil_realData_TJared( timeLimit, workingPathHead, isDraw, taskName, discretizedLevel, near, far, weight)
 
 %numOfCameras = 100;
 % close all;
 if(nargin == 0)
     workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst\';
-    taskName = 'franklin';
-    timeLimit = 20000;
+    taskName = 'sanwoo';
+    timeLimit = 19000;
     isDraw = true;
-    discretizedLevel = 50;
-%     near = 3; far = 6.5;
-    searchRangeSize = 2;
+    discretizedLevel = 100;
+%     near = 0.2; far = 4.5;  %Jared
+      near = 1; far = 15;   %sanwoo
+%     searchRangeSize = 2;
+    weight = 10;
 end
 
 knownOrder = false;  
@@ -64,7 +66,7 @@ for iCamera = 1 :numel(camera)
   
     C{id}.P = camera(iCamera).K * [C{id}.R, camera(iCamera).T]; 
     C{id}.T = camera(iCamera).T;
-    
+    C{id}.fileName = camera(iCamera).fileName;
 %     C{id}.t = time(iCamera);
     C{id}.t = id;   % This is the order of each camera
     C{id}.K = camera(iCamera).K;
@@ -101,12 +103,17 @@ if(knownOrder)
 end
 
 % L1NormMethod(C);
-[peopleOrientation, planeParam] = findWalkingOrientation(C,points3D);
-[near, far] = findRange(searchRangeSize, C, planeParam);
+
+peopleOrientation = findTwoWallsOrientation(C, points3D, taskName, h);
+% peopleOrientation = findOrientationByDetection(C,h);
+% peopleOrientation = findTwoWallsOrientation_coarse(C, points3D, h);
+
+% [peopleOrientation, planeParam] = findWalkingOrientation(C,points3D);
+% [near, far] = findRange(searchRangeSize, C, planeParam);
 
 numOfCameras = numel(C);
-% near = ones(1, numOfCameras) * near;
-% far = ones(1,numOfCameras) * far;
+near = ones(1, numOfCameras) * near;
+far = ones(1,numOfCameras) * far;
 
 for i = 1:numel(C)    
     if(C{i}.detected == true)
@@ -126,7 +133,7 @@ end
 
 addpath('generateGMSTData');
 % generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName);
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName,0,0,peopleOrientation);
+generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName,0,0,peopleOrientation, weight);
 rmpath('generateGMSTData');
 
 % run gmst
@@ -150,19 +157,21 @@ fprintf(1, 'condition number is:%f\n', conditionNum);
 if(isDraw)      %plot the unordered results
     for i = 1: size(camConnect,1)
         pts = calculatedPos(:, camConnect(i,:));
-        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
+        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
     end       
 end
 
 % does the refinement
 % resultsRefine = ReconstructPointTrajectory_SumOfNorm(C, camConnect);
+% resultsRefine = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, peopleOrientation, calculatedPos);
+% 
 % if(isDraw)      %plot the unordered results
 %     for i = 1: size(camConnect,1)
 %          pts = resultsRefine(:, camConnect(i,:));
 %         figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
 %     end       
 % end
-costWithNoOrder = computeCost(resultsRefine', camConnect);
+% costWithNoOrder = computeCost(resultsRefine', camConnect);
 
 % costGivenOrder_plane = usingPlane(C,points3D, h);
 

@@ -4,11 +4,12 @@ function mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHea
 
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
 if(nargin == 0)
-    numOfCameras = 40; 
-    discretizedLevel = 40;
-    timeLimit = 4400;
+    numOfCameras = 20; 
+    discretizedLevel = 5;
+    timeLimit = 100;
     workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst';
     isDraw = true;
+    weight = 15;
 end
 
 % close all
@@ -22,7 +23,7 @@ knownOrder = false;
 if(nargin == 4)
     isDraw = false;
 end
-rng(35,'v5uniform');
+rng(150,'v5uniform');
 %==========================================================================
 if(knownOrder)
     cd ../cvx;
@@ -97,6 +98,8 @@ CC = [C{:}]; ind = ([CC.detected] == true);
 C = C(ind);
 save(fullfile(workingDir, 'C.mat'), 'C');
 
+
+
 if(knownOrder)
     
     [Traj, Traj2] = TrajectoryReconstruction(C); % Reconstruction w/o predefined number of basis    
@@ -127,7 +130,7 @@ verticeFilePath = ['../','task','_time', num2str(timeLimit)];
 verticesFileName = fullfile(verticeFilePath, [num2str(numel(C)), 'inst',...
     num2str(numel(C) * discretizedLevel), '.clu.vertices']);
 
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task',0,0,orientation);
+generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task',0,0,orientation, weight);
 % generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, 'task');
 rmpath('generateGMSTData');
 
@@ -135,7 +138,7 @@ rmpath('generateGMSTData');
 % addpath( '../codigo_gmst/');
 % dataFile = fullfile(['../', 'task', '_time',num2str(timeLimit), '/'], [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
 dataFile = fullfile( fullfile( workingPathHead, ['task', '_time',num2str(timeLimit)])  , [num2str(numOfCameras), 'all', num2str(numOfCameras * discretizedLevel), '.dat']);
-system(['..\codigo_gmst\gmst -all ', dataFile]);
+% system(['..\codigo_gmst\gmst -all ', dataFile]);
 % rmpath( '../codigo_gmst/');
 
 saveComputedPos(verticesFileName, workingDir, discretizedLevel, C, near, far);
@@ -150,6 +153,16 @@ if(isDraw)      %plot the unordered results
     end       
 end
 
+% camConnect_sequence = [[1:numel(C)-1]', [2:numel(C)]'];
+calculatedPos_refined = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation, calculatedPos, weight);
+% calculatedPos_refined = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation);
+if(isDraw)      %plot the unordered results
+    for i = 1: size(camConnect,1)
+        pts = calculatedPos_refined(:, camConnect(i,:));
+        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'b*--','MarkerSize',5); hold off;
+    end       
+end
+
 if(knownOrder)
     cost = computeCost(Pts3d); % The cost of results that are computed with given order
     fprintf(1, 'cost with known order is: %f\n', cost ); 
@@ -157,6 +170,7 @@ end
 
 costComputedPos = computeCost(calculatedPos', camConnect);
 fprintf(1, 'cost with unknown order is %f\n', costComputedPos);
+
 
 
 groundTruthFile = fullfile(workingDir, 'GT3DPoints.mat');

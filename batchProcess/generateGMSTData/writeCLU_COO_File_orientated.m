@@ -1,4 +1,4 @@
-function writeCLU_COO_File_orientated(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, taskName, orientation)
+function writeCLU_COO_File_orientated(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, taskName, orientation, weight)
 
 % load C.mat;
 % numOfCams = 58;
@@ -16,7 +16,7 @@ outputFileName =fullfile(outputPath, [num2str(numOfCams),'inst', num2str(numOfCa
 
 nodes = getNodes3dPos(cams, discretizedLevel, near, far);
 nodes = nodes * 100;
-[edges, edgesCost] = computeEdges(nodes, discretizedLevel, orientation);
+[edges, edgesCost] = computeEdges(nodes, discretizedLevel, orientation, weight);
 edgesCost = round(edgesCost);
 % first write cluster ID
 

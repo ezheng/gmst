@@ -34,4 +34,4 @@ if(visualize)
     plot3(points3D(1,:), points3D(2,:), points3D(3,:), '*');    
 end
 
-orientation = L1;
+orientation = repmat(L1, 1, numOfCameras);

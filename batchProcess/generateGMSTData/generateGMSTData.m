@@ -1,4 +1,4 @@
-function generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName, subsetId, subProbTimeLimit, twoOrientation)
+function generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName, subsetId, subProbTimeLimit, twoOrientation, weight)
 
 
 % workingDir = 'F:\Enliang\matlab\singleView_NSFM\data\task_100';
@@ -25,8 +25,8 @@ elseif(nargin == 6)
     outputPath = fullfile(workingDir, '..');
 %     writeCLU_COO_File(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, taskName);
     writeCLU_COO_File(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, fullfile( workingDir,'../..', taskName) );
-elseif(nargin == 9)
+elseif(nargin == 10)
     outputPath = fullfile(workingDir, '..');
 %     writeCLU_COO_File(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, taskName);
-    writeCLU_COO_File_orientated(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, fullfile( workingDir,'../..', taskName), twoOrientation );
+    writeCLU_COO_File_orientated(cams, numOfCams, near, far, discretizedLevel, outputPath, timeLimit, fullfile( workingDir,'../..', taskName), twoOrientation, weight );
 end

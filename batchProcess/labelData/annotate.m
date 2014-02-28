@@ -1,18 +1,18 @@
 function annotate()
 
 % workingDirWithoutTask = 'F:\Enliang\matlab\GMST_subprob\gmst\batchProcess\labelData\realData\brook3';
-workingDir = 'F:\Enliang\matlab\GMST_subprob\gmst\realData\jared\';
-targetName = 'jared';
+workingDir = 'F:\Enliang\matlab\GMST_subprob\gmst\realData\mix\';
+targetName = 'mix';
 % --------------------------------------------------------------------------------------
 fullNVMFileName = fullfile(workingDir, [targetName, '.nvm']);
 
 fullDataFileName = fullfile(workingDir, [targetName, '.mat']);
-if(~exist(fullDataFileName, 'file'))
+% if(~exist(fullDataFileName, 'file'))
     [camera, points3D] = extractNVMData(fullNVMFileName);
-else
-    g = load(fullDataFileName); 
-    camera = g.standardCams; points3D = g.points3D;
-end
+% else
+%     g = load(fullDataFileName); 
+%     camera = g.camera; points3D = g.points3D;
+% end
 
 % allImages = dir(fullfile(workingDir, 'image', '*.jpg'));
 
@@ -61,7 +61,8 @@ for i = 1:size(duplication,1)
     newCamera(idx:idx+duplication(i)-1) = camera(i);
     idx = idx + duplication(i);
 end
-    
+camera = newCamera;
+
 save(fullfile(workingDir, 'pointsPos.mat'), 'pointsPos');
 save(fullfile(workingDir, [targetName, '.mat']), 'pointsPos', 'camera', 'points3D' );
 

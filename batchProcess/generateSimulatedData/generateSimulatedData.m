@@ -7,10 +7,10 @@ end
 
 % The number of cameras is the same to the number 3d points
 
-[points3D, singleOrientation, orientation] = generate3DPoints(numOfCameras, 1, true);
+% [points3D,  orientation] = generate3DPoints(numOfCameras, 1, true);
 % [points3D, orientation] = generate3DPoints_multipleLanes(numOfCameras, 1, false);
 % [points3D,orientation] = generate3DPoints_oneLanes(numOfCameras, 1, true);
-% [points3D, orientation] = generate3DPoints_Circle(numOfCameras, 1, true);
+[points3D, orientation] = generate3DPoints_Circle(numOfCameras, 1, true);
 % [points3D, orientation] = generate3DPoints_Circle_Quantized(numOfCameras, 1, true);
 % [points3D, orientation] = generate3DPoints_Xshape(numOfCameras, 1, true);
 % [points3D, orientation] = generate3DPoints_SineShape(numOfCameras, 1, true);
