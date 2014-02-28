@@ -80,7 +80,7 @@ int GRASP::adaptiveCalculateTree(){
 			totalIterations[heuristic]++;
 			int cost = Searcher::localSearch(solution);
 
-			if(Parameters::getInstance().VERBOSE)
+			//if(Parameters::getInstance().VERBOSE)
 				cout << "HEURISTICA " << constructiveHeuristic << " ----> " << iteration << " Solucao: " << cost << endl;
 
 			//Faz o path relinking se a solucao corrente for suficientemente boa

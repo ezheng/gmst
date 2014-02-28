@@ -332,49 +332,49 @@ void Graph::reductionTests(){
 	//Criando uma lista auxiliar para percorrer e retirar as arestas === Creating a list helper to go and remove the edges
 	list< vector<int> > edgesAux(edges.begin(), edges.end());
 
-	int count=0;
-	list< vector<int> > ::iterator it = edgesAux.begin();
-	// Verificando se a aresta *it pode ser retirada  ===  Checking if the edge * it can be removed
-	while(it!= edgesAux.end()){
-		int vertex1 = (*it)[VERTEX1];
-		int vertex2 = (*it)[VERTEX2];
-		int cost = (*it)[COST];
-		bool removeEdge = false;
-		int cluster = 0;
- 		//Para cada cluster == For each cluster
-		while(((unsigned)cluster < numberOfClusters) && (!removeEdge)){
-
-			if((cluster != clusterOf[vertex1]) && (cluster != clusterOf[vertex2])){
-				removeEdge = true;
-				unsigned int i=0;
-				//Passando por todos os vertices do cluster == Going through all the vertices of the cluster
-				while((i < clusters[cluster].size()) && (removeEdge)){
-					int vertex = clusters[cluster][i];
-					if((!exists[vertex1][vertex])||(!exists[vertex2][vertex])){
-						removeEdge = false;
-					} else{
-						int cost1 = adjacency[vertex1][vertex];
-						int cost2 = adjacency[vertex2][vertex];
-						if((cost < cost1) || (cost < cost2))
-						removeEdge = false;
-					}
-					i++;
-				}
-				if(removeEdge){
-					std::cout << "edges removed" << std::endl;
-					it = edgesAux.erase(it);
-					exists[vertex1][vertex2] = false;
-					exists[vertex2][vertex1] = false;
-// 					adjVertices[vertex1].remove(vertex2);
-// 					adjVertices[vertex2].remove(vertex1);
-					count++;
-				}
-			}
-			cluster++;
-		}
-		if(!removeEdge)
-			it++;
-	}
+//	int count=0;
+//	list< vector<int> > ::iterator it = edgesAux.begin();
+//	// Verificando se a aresta *it pode ser retirada  ===  Checking if the edge * it can be removed
+//	while(it!= edgesAux.end()){
+//		int vertex1 = (*it)[VERTEX1];
+//		int vertex2 = (*it)[VERTEX2];
+//		int cost = (*it)[COST];
+//		bool removeEdge = false;
+//		int cluster = 0;
+// 		//Para cada cluster == For each cluster
+//		while(((unsigned)cluster < numberOfClusters) && (!removeEdge)){
+//
+//			if((cluster != clusterOf[vertex1]) && (cluster != clusterOf[vertex2])){
+//				removeEdge = true;
+//				unsigned int i=0;
+//				//Passando por todos os vertices do cluster == Going through all the vertices of the cluster
+//				while((i < clusters[cluster].size()) && (removeEdge)){
+//					int vertex = clusters[cluster][i];
+//					if((!exists[vertex1][vertex])||(!exists[vertex2][vertex])){
+//						removeEdge = false;
+//					} else{
+//						int cost1 = adjacency[vertex1][vertex];
+//						int cost2 = adjacency[vertex2][vertex];
+//						if((cost < cost1) || (cost < cost2))
+//						removeEdge = false;
+//					}
+//					i++;
+//				}
+//				if(removeEdge){
+//					std::cout << "edges removed" << std::endl;
+//					it = edgesAux.erase(it);
+//					exists[vertex1][vertex2] = false;
+//					exists[vertex2][vertex1] = false;
+//// 					adjVertices[vertex1].remove(vertex2);
+//// 					adjVertices[vertex2].remove(vertex1);
+//					count++;
+//				}
+//			}
+//			cluster++;
+//		}
+//		if(!removeEdge)
+//			it++;
+//	}
 	
 	/*it = edgesAux.begin();
 	//Para cada aresta
