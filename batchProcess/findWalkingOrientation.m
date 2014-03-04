@@ -22,7 +22,7 @@ planeDir = B(1:3)/norm(B(1:3));
 orientation = lineDir - dot(planeDir, lineDir) * lineDir;
 orientation = orientation/norm(orientation);
 
-
+orientation = repmat(orientation, 1, numel(C));
 
 
 

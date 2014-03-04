@@ -12,6 +12,7 @@ if(nargin == 0)
     discretizedLevel = 50;
 %     near = 3; far = 6.5;
     searchRangeSize = 2;
+    weight = 15;
 end
 
 knownOrder = false;  
@@ -126,7 +127,7 @@ end
 
 addpath('generateGMSTData');
 % generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName);
-generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName,0,0,peopleOrientation);
+generateGMSTData(workingDir, timeLimit, near, far, discretizedLevel, taskName,0,0,peopleOrientation,weight);
 rmpath('generateGMSTData');
 
 % run gmst
@@ -162,7 +163,7 @@ end
 %         figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
 %     end       
 % end
-costWithNoOrder = computeCost(resultsRefine', camConnect);
+% costWithNoOrder = computeCost(resultsRefine', camConnect);
 
 % costGivenOrder_plane = usingPlane(C,points3D, h);
 

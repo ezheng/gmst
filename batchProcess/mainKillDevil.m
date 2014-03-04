@@ -1,12 +1,12 @@
 %  prepare the camera parameters
 % 
-function mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHead, isDraw)
+function conditionNum =  mainKillDevil(numOfCameras, discretizedLevel, timeLimit, workingPathHead, isDraw, weight)
 
 % usage: mainKillDevil(20, 5, 20, '~/Enliang/matlab/gmst/', true)
 if(nargin == 0)
-    numOfCameras = 20; 
+    numOfCameras = 100; 
     discretizedLevel = 5;
-    timeLimit = 100;
+    timeLimit = 200;
     workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst';
     isDraw = true;
     weight = 15;
@@ -23,7 +23,7 @@ knownOrder = false;
 if(nargin == 4)
     isDraw = false;
 end
-rng(150,'v5uniform');
+% rng(150,'v5uniform');
 %==========================================================================
 if(knownOrder)
     cd ../cvx;
@@ -154,7 +154,8 @@ if(isDraw)      %plot the unordered results
 end
 
 % camConnect_sequence = [[1:numel(C)-1]', [2:numel(C)]'];
-calculatedPos_refined = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation, calculatedPos, weight);
+[calculatedPos_refined, conditionNum] = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation, calculatedPos, weight);
+return;
 % calculatedPos_refined = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation);
 if(isDraw)      %plot the unordered results
     for i = 1: size(camConnect,1)

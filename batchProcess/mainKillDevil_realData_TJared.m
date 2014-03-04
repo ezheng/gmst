@@ -6,14 +6,17 @@ function mainKillDevil_realData_TJared( timeLimit, workingPathHead, isDraw, task
 % close all;
 if(nargin == 0)
     workingPathHead = 'F:\Enliang\matlab\GMST_subprob\gmst\';
-    taskName = 'sanwoo';
-    timeLimit = 19000;
+%     taskName = 'sanwoo';
+    taskName = 'mixOneLane2';
+    timeLimit = 3000;
     isDraw = true;
-    discretizedLevel = 100;
+    discretizedLevel = 120;
 %     near = 0.2; far = 4.5;  %Jared
-      near = 1; far = 15;   %sanwoo
+%       near = 1; far = 15;   % sanwoo 19000 sec , discretizedLevel = 100.
+%        near = 0.1; far = 4; % mixOneLane
+        near = 0.5; far = 5; % mixOneLane2
 %     searchRangeSize = 2;
-    weight = 10;
+    weight = 15;
 end
 
 knownOrder = false;  
@@ -163,14 +166,14 @@ end
 
 % does the refinement
 % resultsRefine = ReconstructPointTrajectory_SumOfNorm(C, camConnect);
-% resultsRefine = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, peopleOrientation, calculatedPos);
+resultsRefine = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, peopleOrientation, calculatedPos, weight);
 % 
-% if(isDraw)      %plot the unordered results
-%     for i = 1: size(camConnect,1)
-%          pts = resultsRefine(:, camConnect(i,:));
-%         figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
-%     end       
-% end
+if(isDraw)      %plot the unordered results
+    for i = 1: size(camConnect,1)
+         pts = resultsRefine(:, camConnect(i,:));
+        figure(h); hold on; plot3(pts(1,:), pts(2,:), pts(3,:), 'r*--','MarkerSize',5); hold off;
+    end       
+end
 % costWithNoOrder = computeCost(resultsRefine', camConnect);
 
 % costGivenOrder_plane = usingPlane(C,points3D, h);

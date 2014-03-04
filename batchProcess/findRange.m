@@ -10,7 +10,7 @@ for i = 1:numOfCams
     assert(far(i) > 0);
     
 end
-far = far + 0.2;
+far = far - 0.1 + rand(1)*0.1;
 near = far - searchRangeSize;
 
 near(near<0) = 0;

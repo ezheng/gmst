@@ -1,8 +1,8 @@
 function annotate()
 
 % workingDirWithoutTask = 'F:\Enliang\matlab\GMST_subprob\gmst\batchProcess\labelData\realData\brook3';
-workingDir = 'F:\Enliang\matlab\GMST_subprob\gmst\realData\mix\';
-targetName = 'mix';
+workingDir = 'F:\Enliang\matlab\GMST_subprob\gmst\realData\mixOneLane2\';
+targetName = 'mixOneLane2';
 % --------------------------------------------------------------------------------------
 fullNVMFileName = fullfile(workingDir, [targetName, '.nvm']);
 

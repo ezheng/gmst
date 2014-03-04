@@ -1,4 +1,4 @@
-function  points3D = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation, points3D, weight)
+function  [points3D,condnumber] = ReconstructPointTrajectory_SumOfNorm_direction(C, camConnect, orientation, points3D, weight)
 
 newOrientation = zeros(3, size(camConnect, 1));
 
@@ -98,6 +98,45 @@ A2 = (weight+1)*A - weight*A1; b2 = (weight + 1)* b - weight* b1;
 xx = A2 \ b2;
 
 points3D = cameraCenterMatrix + directionMatrix .* repmat(xx', 3,1);
+
+
+% -----------------------------------------------------------------------------------
+
+
+weight = 1/weight;
+weight = 0;
+allWeight = [0:0.01:2];
+condnumber = zeros(numel(weight), 1);
+for j = 1:numel(allWeight)
+    weight = allWeight(j);
+    
+    A3 = zeros(numOfCameras, numOfCameras);
+    b3 = zeros(numOfCameras,1);
+    
+    
+    for i = 1:size(camConnect,1)
+        id1 = camConnect(i,1); id2 = camConnect(i,2);
+        
+        A3( id1, id2) = dot(C{id1}.ori, newOrientation(:,i)) * dot(C{id2}.ori, newOrientation(:,i)) - (1+weight)*dot(C{id1}.ori, C{id2}.ori) ;
+        A3( id2, id1) = A3(id1,id2);
+        
+        A3( id1, id1) = A3( id1, id1) + (1+weight) - dot(C{id1}.ori, newOrientation(:,i)) ^2;
+        A3( id2, id2) = A3( id2, id2) + (1+weight) - dot(C{id2}.ori, newOrientation(:,i)) ^2;
+        %     A( id1, id2) = -dot(C{id1}.ori, C{id2}.ori);
+        %     A( id2, id1) = A(id1,id2);
+        
+        b3(id1) = b3(id1) + dot(C{id1}.C - C{id2}.C, newOrientation(:,i) ) * dot(C{id1}.ori, newOrientation(:,i)) - dot(C{id1}.C - C{id2}.C, C{id1}.ori)*(1+weight) ;
+        b3(id2) = b3(id2) + dot(C{id2}.C - C{id1}.C, newOrientation(:,i) ) * dot(C{id2}.ori, newOrientation(:,i)) - dot(C{id2}.C - C{id1}.C, C{id2}.ori)*(1+weight);
+    end
+    condnumber(j) = cond(A3);
+    xxx = A3\b3;
+% points3D = cameraCenterMatrix + directionMatrix .* repmat(xxx', 3,1);
+end
+% A3 = A3*(1/weight); b3 = b3*(1/weight);
+
+
+
+
 
 
 

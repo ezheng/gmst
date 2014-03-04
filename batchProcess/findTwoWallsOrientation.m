@@ -53,12 +53,15 @@ for i = 1:numOfCams
      [~,name,~] = fileparts(fileName);
     num = str2double( regexp(name, '\d+', 'match') );
     
-    if( (num >= imageDirection{1}(1) && num <= imageDirection{1}(2))  ||  (num >= imageDirection{3}(1) && num <= imageDirection{3}(2)) )
-        orientation(:,i) = [orientation2 ];        
-    else 
+    if( strcmp(taskName, 'mixOneLane') || strcmp(taskName, 'mixOneLane2'))
         orientation(:,i) = [orientation1];        
-    end
-    
+    else
+        if( (num >= imageDirection{1}(1) && num <= imageDirection{1}(2))  ||  (num >= imageDirection{3}(1) && num <= imageDirection{3}(2)) )
+            orientation(:,i) = [orientation2];
+        else
+            orientation(:,i) = [orientation1];
+        end
+    end    
 end
 
 if( nargin == 4 )
